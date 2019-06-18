@@ -2,6 +2,7 @@ package thp
 
 import (
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"time"
@@ -27,8 +28,15 @@ func BuildEndpoint(mac, token string) string {
 func GetRequest(endpoint string) string {
 	req, _ := http.NewRequest("GET", endpoint, nil)
 	client := new(http.Client)
-	resp, _ := client.Do(req)
-	byteArray, _ := ioutil.ReadAll(resp.Body)
-	resp.Body.Close()
-	return string(byteArray)
+	if resp, err_resp := client.Do(req); err_resp == nil {
+		defer resp.Body.Close()
+		if byteArray, err_array := ioutil.ReadAll(resp.Body); err_array == nil {
+			return string(byteArray)
+		} else {
+			log.Println(err_array)
+		}
+	} else {
+		log.Println(err_resp)
+	}
+	return ""
 }
