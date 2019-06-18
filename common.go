@@ -26,17 +26,20 @@ func BuildEndpoint(mac, token string) string {
 }
 
 func GetRequest(endpoint string) string {
-	req, _ := http.NewRequest("GET", endpoint, nil)
-	client := new(http.Client)
-	if resp, err_resp := client.Do(req); err_resp == nil {
-		defer resp.Body.Close()
-		if byteArray, err_array := ioutil.ReadAll(resp.Body); err_array == nil {
-			return string(byteArray)
+	if req, err_req := http.NewRequest("GET", endpoint, nil); err_req == nil {
+		client := new(http.Client)
+		if resp, err_resp := client.Do(req); err_resp == nil {
+			defer resp.Body.Close()
+			if byteArray, err_array := ioutil.ReadAll(resp.Body); err_array == nil {
+				return string(byteArray)
+			} else {
+				log.Println(err_array)
+			}
 		} else {
-			log.Println(err_array)
+			log.Println(err_resp)
 		}
 	} else {
-		log.Println(err_resp)
+		log.Println(err_req)
 	}
 	return ""
 }
